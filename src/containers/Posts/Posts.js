@@ -102,7 +102,7 @@ export default class Posts extends Component {
                             return (
                                 <tr key={index} onClick={() => this.onPostSelect(post)}>
                                     <td>{post.title}</td>
-                                    <td><a target="_blank" href={post.url} onClick={e => e.stopPropagation()}>{post.url}</a></td>
+                                    <td><a target="_blank" rel="noopener noreferrer" href={post.url} onClick={e => e.stopPropagation()}>{post.url}</a></td>
                                     <td>{post.created_at}</td>
                                     <td>{post.author}</td>
                                 </tr>
