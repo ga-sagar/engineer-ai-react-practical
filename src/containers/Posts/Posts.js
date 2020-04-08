@@ -107,7 +107,7 @@ export default class Posts extends Component {
         }
 
         this.setState({
-            searchTerm,
+            searchTerm: target.value,
             filteredPost
         });
     }
@@ -152,7 +152,7 @@ export default class Posts extends Component {
                                 <tr key={index} onClick={() => this.onPostSelect(post)}>
                                     <td>{post.title}</td>
                                     <td>
-                                        <a target="_blank" rel="noopener noreferrer" href={post.url} onClick={e => e.stopPropagation()} title={post.url}>{post.url.length > 50 ? `${post.url.slice(0, 50)}.....` : post.url}</a>
+                                        <a target="_blank" rel="noopener noreferrer" href={post.url} onClick={e => e.stopPropagation()} title={post.url}>{post.url && post.url.length > 50 ? `${post.url.slice(0, 50)}.....` : post.url}</a>
                                     </td>
                                     <td>{post.created_at}</td>
                                     <td>{post.author}</td>
