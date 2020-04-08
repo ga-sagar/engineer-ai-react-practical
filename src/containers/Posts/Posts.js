@@ -92,7 +92,6 @@ export default class Posts extends Component {
         const target = event.target;
         const searchTerm = target.value.toLowerCase().trim();
         let filteredPost = [];
-        console.log('searched term', target.value);
         if (posts && posts.length && searchTerm.length) {
             filteredPost = posts.filter(post => {
                 const title = post.title.toLowerCase();
