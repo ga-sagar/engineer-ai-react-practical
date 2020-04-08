@@ -95,7 +95,7 @@ export default class Posts extends Component {
         if (posts && posts.length && searchTerm.length) {
             filteredPost = posts.filter(post => {
                 const title = post.title.toLowerCase();
-                const url = post.url.toLowerCase();
+                const url = post.url ? post.url.toLowerCase() : '';
                 const author = post.author.toLowerCase();
 
                 return title.includes(searchTerm) || url.includes(searchTerm) || author.includes(searchTerm);
