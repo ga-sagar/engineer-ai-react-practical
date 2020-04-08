@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { Table } from 'react-bootstrap';
+import { Table, Form } from 'react-bootstrap';
 import PostDetailsModal from '../../components/PostDetailsModal/PostDetailsModal';
 import Pagination from '../../components/Pagination/Pagination';
 
@@ -16,7 +16,9 @@ export default class Posts extends Component {
             currentActivePage: 0,
             totalPages: 0,
             selectedPost: null,
-            selectedPage: -1
+            selectedPage: -1,
+            filteredPost: [],
+            searchTerm: ''
         };
     }
 
@@ -41,7 +43,7 @@ export default class Posts extends Component {
                     const data = response.data;
                     const oldPosts = [...this.state.posts];
                     const totalPages = this.state.totalPages + 1;
-                    let currentActivePage = totalPages;
+                    let currentActivePage = 1;
                     const selectedPage = this.state.selectedPage;
                     if (selectedPage > -1) {
                         currentActivePage = selectedPage
@@ -50,7 +52,9 @@ export default class Posts extends Component {
                         posts: [...oldPosts, ...data.hits],
                         currentActivePage,
                         totalPages,
-                        selectedPage
+                        selectedPage,
+                        filteredPost: [],
+                        searchTerm: ''
                     });
                 }
             })
@@ -77,17 +81,63 @@ export default class Posts extends Component {
             const selectedPage = parseInt(target.text.trim());
             this.setState({
                 selectedPage,
-                currentActivePage: selectedPage
+                currentActivePage: selectedPage,
+                filteredPost: [],
+                searchTerm: ''
             });
         }
     }
 
+    onSearch(event, posts) {
+        const target = event.target;
+        const searchTerm = target.value.toLowerCase().trim();
+        let filteredPost = [];
+        console.log('searched term', target.value);
+        if (posts && posts.length && searchTerm.length) {
+            filteredPost = posts.filter(post => {
+                const title = post.title.toLowerCase();
+                const url = post.url.toLowerCase();
+                const author = post.author.toLowerCase();
+
+                return title.includes(searchTerm) || url.includes(searchTerm) || author.includes(searchTerm);
+            });
+        }
+
+        if (!searchTerm.length) {
+            filteredPost = [];
+        }
+
+        this.setState({
+            searchTerm,
+            filteredPost
+        });
+    }
+
     render() {
-        const startIndex = this.state.selectedPage > -1 ? (this.state.selectedPage - 1) * 20 : (this.state.currentActivePage - 1) * 20;
+        const selectedPage = this.state.selectedPage;
+        const startIndex = selectedPage > -1 ? (selectedPage - 1) * 20 : (this.state.currentActivePage - 1) * 20;
         const endIndex = startIndex + 20;
-        const posts = this.state.posts.slice(startIndex, endIndex);
+
+        // check if user did any searching or not by checking the length of filteredPost
+        let posts = []
+        if (this.state.filteredPost.length) {
+            posts = [...this.state.filteredPost];
+        } else {
+            posts = this.state.posts.slice(startIndex, endIndex);
+        }
         return (
             <React.Fragment>
+
+                {/* Search box */}
+                <Form>
+                    <Form.Group controlId="searchTerm">
+                        <Form.Control type="text" placeholder="Search by title or url or author..."
+                            onChange={(event) => this.onSearch(event, posts)}
+                            value={this.state.searchTerm} />
+                    </Form.Group>
+                </Form>
+
+                {/* Posts Table */}
                 <Table striped bordered hover>
                     <thead>
                         <tr>
